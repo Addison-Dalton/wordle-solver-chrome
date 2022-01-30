@@ -1,13 +1,11 @@
 /* global chrome */
-import { letterWeight, defaultAvailableWords } from '../utils/words.js';
+import { letterWeights, defaultAvailableWords } from '../utils/words.js';
 
-// const incorrectLetters = [];
 let availableWords = defaultAvailableWords;
 
 try {
   chrome.runtime.onMessage.addListener((message, sender) => {
     determineSuggestedWords(message.gameState);
-    console.log('message', message, 'sender', sender);
     setGameState(message);
   });
   
@@ -69,12 +67,23 @@ const determineSuggestedWords = (gameState) => {
 
   
   availableWords = filterAvailableWords(guessedWord);
-  console.log('availableWords', availableWords);
+
+  const wordsWithWeights = availableWords.map((word) => {
+    const totalWeight = word.split('').reduce((weight, letter) => weight += getLetterWeight(letter), 0);
+    return {
+      word,
+      weight: totalWeight
+    }
+  }).sort((a, b) => a.weight > b.weight);
+
+
+  console.log('Top 5 suggested words: ', wordsWithWeights.slice(0, 5));
 }
+
+const getLetterWeight = (letter) => letterWeights.find((lw) => lw.letter === letter).weight;
 
 // constructs a regex to test that string (available word) contains all present words in the guessed word
 const presentLetterRegexConstructor = (presentLetters) => {
-  console.log('The present letters going into regex are: ', presentLetters);
   const regexCaps = '[a-z]*';
   let regex = presentLetters.reduce((regexAcc, { letter }) => {
     return regexAcc += `(?=.*${letter})`;
@@ -117,28 +126,19 @@ const deconstructGuessedWord = (guessedWord) => {
 const filterAvailableWords = (guessedWord) => {
   const { incorrectLetters, presentLetters, correctLetters } = deconstructGuessedWord(guessedWord);
 
-  console.log('descontructed word arrays', incorrectLetters, presentLetters, correctLetters);
-
   return availableWords.filter(word => {
-    console.log('=============================');
-    console.log('word', word);
     // filter out words that contain incorrectLetters
     if (incorrectLetters.some(l => word.includes(l))) return false;
-    console.log('word contains no incorrect letters');
 
     // filter out words that don't contain correct letters
     if (correctLetters.some(({ letter, origIndex }) => word[origIndex] !== letter)) return false;
-    console.log('word contains correct letters');
     // filter out words that don't contain present letters
     const regex = new RegExp(presentLetterRegexConstructor(presentLetters), 'g');
-    console.log('generated regex is: ', regex);
     if (!regex.test(word)) return false;
-    console.log('word contains present letters');
 
     // finally, filter out words that match present letters current index
     // since the correct word will have the present letter at a different index
     if (presentLetters.some(({ letter, origIndex }) => word[origIndex] === letter)) return false;
-    console.log('word contains no present letters are their current index');
     return true;
   });
 }

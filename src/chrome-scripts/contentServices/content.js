@@ -8,6 +8,6 @@ window.addEventListener('keypress', (e) => {
 
 const getPageLocalStorage = () => {
   chrome.runtime.sendMessage({
-    gameState: localStorage['gameState']
+    gameState: localStorage['nyt-wordle-state']
   });
 }

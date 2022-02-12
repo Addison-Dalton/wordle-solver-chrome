@@ -47,10 +47,6 @@ const parseGameState = (gameState) => {
 
   const parsedGuess = lastGuess.split('').map((letter, idx) => {
     const evaluation = lastEval[idx];
-    // if (evaluation === 'absent') {
-    //   incorrectLetters.push(letter);
-    // }
-
     return {
       letter,
       evaluation

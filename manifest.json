@@ -14,10 +14,10 @@
     "scripting"
   ],
   "optional_permissions": ["tabs"],
-  "host_permissions": ["*://*.powerlanguage.co.uk/wordle/*"],
+  "host_permissions": ["*://*.nytimes.com/games/wordle/index.html"],
   "content_scripts": [
     {
-      "matches": ["*://*.powerlanguage.co.uk/wordle/*"],
+      "matches": ["*://*.nytimes.com/games/wordle/index.html"],
       "js": ["src/chrome-scripts/contentServices/content.js"]
     }
   ],

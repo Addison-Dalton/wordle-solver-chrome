@@ -10,5 +10,3 @@ const getPageLocalStorage = () => {
     gameState: localStorage['nyt-wordle-state']
   });
 }
-
-// TODO inject div into document to act as react root

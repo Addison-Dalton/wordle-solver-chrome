@@ -18,7 +18,8 @@
   "content_scripts": [
     {
       "matches": ["*://*.nytimes.com/games/wordle/index.html"],
-      "js": ["src/chrome-scripts/contentServices/content.js"],
+      "js": ["build/static/js/wordle-solver-content.js", "build/static/js/wordle-solver-app.js"],
+      "css": ["build/static/css/wordle-solver-app.css"],
       "run_at": "document_end"
     }
   ],

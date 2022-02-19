@@ -1,6 +1,3 @@
-body {
-  margin: 0;
+#wordle-solver-root {
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }

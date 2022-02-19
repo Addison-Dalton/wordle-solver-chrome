@@ -25,7 +25,7 @@ const setGameState = (message) => {
   const { gameState } = message;
   if (!gameState) return;
 
-  chrome.storage.sync.set({ gameState });
+  chrome.storage.local.set({ gameState });
 }
 
 const parseGameState = (gameState) => {
@@ -74,6 +74,9 @@ const determineSuggestedWords = (gameState) => {
 
 
   console.log('Top 5 suggested words: ', wordsWithWeights.slice(0, 5));
+
+  // set suggestions in chrome storage
+  chrome.storage.local.set({ wordsWithWeights });
 }
 
 const getLetterWeight = (letter) => letterWeights.find((lw) => lw.letter === letter).weight;

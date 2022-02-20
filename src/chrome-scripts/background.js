@@ -64,6 +64,8 @@ const determineSuggestedWords = (gameState) => {
   
   availableWords = filterAvailableWords(guessedWord);
 
+  // applies a total weight to each word based on the sum of its
+  // letter weights
   const wordsWithWeights = availableWords.map((word) => {
     const totalWeight = word.split('').reduce((weight, letter) => weight += getLetterWeight(letter), 0);
     return {
@@ -72,14 +74,40 @@ const determineSuggestedWords = (gameState) => {
     }
   }).sort((a, b) => a.weight > b.weight);
 
-
-  console.log('Top 5 suggested words: ', wordsWithWeights.slice(0, 5));
+  const suggestedWords = wordsWithWeights.slice(0, 5);
+  const suggestedWordsWithEval = suggestedWords.map((suggestedWord) => {
+    return applyEvalToSuggestions(suggestedWord.word, guessedWord);
+  });
+  console.log('Top 5 suggested words: ', suggestedWordsWithEval);
 
   // set suggestions in chrome storage
-  chrome.storage.local.set({ wordsWithWeights });
+  chrome.storage.local.set({ suggestedWords: suggestedWordsWithEval });
 }
 
 const getLetterWeight = (letter) => letterWeights.find((lw) => lw.letter === letter).weight;
+
+// takes a suggested word and applies an eval to each letter
+// that being if it's correct, present, or unknown.
+// This will currently be based off the last guessed word
+// This could be improved, however, by taking the collection
+// of correct letters and present letters into account
+const applyEvalToSuggestions = (suggestedWord, lastGuessedWord) => {
+  const suggestedLetters = suggestedWord.split('');
+  return suggestedLetters.map((letter, idx) => {
+    const { letter: lastGuessedLetter, evaluation } = lastGuessedWord[idx];
+    if (letter === lastGuessedLetter && (evaluation === 'correct' || evaluation === 'present')) {
+      return {
+        letter,
+        evaluation
+      }
+    }
+
+    return {
+      letter,
+      evaluation: 'unknown'
+    }
+  })
+}
 
 // constructs a regex to test that string (available word) contains all present words in the guessed word
 const presentLetterRegexConstructor = (presentLetters) => {

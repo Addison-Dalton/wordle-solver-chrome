@@ -1,4 +1,6 @@
-type SuggestedWord = {
-  word: string;
-  weight: number;
-}
+type SuggestedWord = LetterWithEval[];
+
+type LetterWithEval = {
+  letter: string;
+  evaluation: 'present' | 'absent' | 'unknown';
+};

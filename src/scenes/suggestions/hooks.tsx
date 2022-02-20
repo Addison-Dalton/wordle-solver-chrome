@@ -6,7 +6,7 @@ export const useSuggestedWords = () => {
   useEffect(() => {
     const getSuggestedWords = async () => {
       // manually typing this since none of the chrome stuff is typed, so types can't be inferred.
-      const chromeSuggestedWords = await chrome.storage.local.get('wordsWithWeights') as SuggestedWord[];
+      const { suggestedWords: chromeSuggestedWords } = await chrome.storage.local.get('suggestedWords');
       if (chromeSuggestedWords) {
         setSuggestedWords(chromeSuggestedWords);
       }
